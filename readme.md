@@ -23,3 +23,21 @@ Set up a new node/express app for your project 2
 2. Initialize sequelize
 3. Create a database for this app `createdb express-auth-boilerplate`
 4. Edit the`config.json` as needed
+
+## Part 1: Creating a user
+Creating a user is what happens when you sign up on a site. In many ways, it is exactly like creating any other CRUDable resource: you submit a form, it `POST`s to a `/users` endpoint, and we INSERT INTO the users table.
+
+1. Use sequelize to create a users table. It should have the columns of email and password.
+```
+sequelize model:create --name user --attributes email:string,passwo
+rd:string
+```
+2. Migrate! `sequelize db:migrate`
+3. Create a users controller to hold all these user-related routes, as well as a users subfolder within views.
+4. Create a route `GET /users/new` that serves up the form to create a new user. Put a link to this route in a nav bar inside layout.ejs.
+5. Create a route `POST /users` that creates a new user, then redirects to the home route (don't forget the body-parser middleware).
+6. Submit this form, and use psql to confirm that the user got created.
+
+After these steps are in place, we will take an extra step that we haven't taken before: we will store this user's id in a _cookie_. This sends the user's id to the client's browser, which holds onto it, and sends it along with all subsequent requests within this domain.
+
+Inside the create user route, let's set the cookie with `res.cookie('userId', <the user's id>)`. Then, let's look at the cookie in our browser. It's important to note that you can clear the cookie manually from the browser: we'll have to do this by hand until we build the logout system.

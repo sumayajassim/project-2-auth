@@ -5,6 +5,10 @@ const ejsLayouts = require('express-ejs-layouts')
 // MIDDLEWARE
 app.set('view engine', 'ejs')
 app.use(ejsLayouts)
+app.use(express.urlencoded({extended: false}))
+
+// CONTROLLERS
+app.use('/users', require('./controllers/users'))
 
 // ROUTES
 app.get('/', (req, res)=>{
