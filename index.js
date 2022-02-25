@@ -15,7 +15,7 @@ app.use(async (req, res, next)=>{
     if(req.cookies.userId) {
         const user = await db.user.findByPk(req.cookies.userId)
         res.locals.user = user
-    }
+    } else res.locals.user = null
     next()
 })
 

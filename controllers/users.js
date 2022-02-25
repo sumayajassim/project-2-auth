@@ -37,4 +37,8 @@ router.get('/logout', (req, res)=>{
     res.redirect('/')
 })
 
+router.get('/profile', (req, res)=>{
+    res.render('users/profile.ejs')
+})
+
 module.exports = router
