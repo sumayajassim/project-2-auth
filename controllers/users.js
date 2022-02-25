@@ -1,6 +1,8 @@
 const express = require('express')
 const db = require('../models')
 const router = express.Router()
+const cryptojs = require('crypto-js')
+require('dotenv').config()
 
 router.get('/new', (req, res)=>{
     res.render('users/new.ejs')
@@ -8,7 +10,9 @@ router.get('/new', (req, res)=>{
 
 router.post('/', async (req, res)=>{
     const newUser = await db.user.create(req.body)
-    res.cookie('userId', newUser.id)
+    const encryptedUserId = cryptojs.AES.encrypt(newUser.id.toString(), process.env.SECRET)
+    const encryptedUserIdString = encryptedUserId.toString()
+    res.cookie('userId', encryptedUserIdString)
     res.redirect('/')
 })
 
@@ -26,7 +30,9 @@ router.post('/login', async (req, res)=>{
         res.render('users/login', { error: "Invalid email/password" })
     } else {
         console.log('logging in the user!!!')
-        res.cookie('userId', user.id)
+        const encryptedUserId = cryptojs.AES.encrypt(user.id.toString(), process.env.SECRET)
+        const encryptedUserIdString = encryptedUserId.toString()
+        res.cookie('userId', encryptedUserIdString)
         res.redirect('/')
     }
 })
