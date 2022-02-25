@@ -3,13 +3,15 @@ const db = require('../models')
 const router = express.Router()
 const cryptojs = require('crypto-js')
 require('dotenv').config()
+const bcrypt = require('bcrypt')
 
 router.get('/new', (req, res)=>{
     res.render('users/new.ejs')
 })
 
 router.post('/', async (req, res)=>{
-    const newUser = await db.user.create(req.body)
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+    const newUser = await db.user.create({email: req.body.email, password: hashedPassword})
     const encryptedUserId = cryptojs.AES.encrypt(newUser.id.toString(), process.env.SECRET)
     const encryptedUserIdString = encryptedUserId.toString()
     res.cookie('userId', encryptedUserIdString)
@@ -25,7 +27,7 @@ router.post('/login', async (req, res)=>{
     if(!user){
         console.log('user not found')
         res.render('users/login', { error: "Invalid email/password" })
-    } else if(user.password !== req.body.password) {
+    } else if(!bcrypt.compareSync(req.body.password, user.password)) {
         console.log('password incorrect')
         res.render('users/login', { error: "Invalid email/password" })
     } else {
