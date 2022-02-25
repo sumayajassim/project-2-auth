@@ -153,4 +153,26 @@ version of bcrypt
 ```
 The purpose of a salt is: let's say that the user made a dumb password like 'Password1234'. This will probably appear in most rainbow tables. But 'Password1234eKH9xXBxnEVhruGsUoDE2.' certainly will not. This post explains the salting process well: https://stackoverflow.com/questions/6832445/how-can-bcrypt-have-built-in-salts
 
-### Part 5c: Making ensuring complex passwords: Sequelize validations
+## Part 6: Prevent duplicate users
+
+Change the signup route to use a `findOrCreate` that searches by the email.
+If the user wasn't created, render the login page and send an appropriate error message to display.
+If the user was created, proceed with hashing the password and assigning it to the user object in the db.
+
+```js
+router.post('/', async (req, res)=>{
+    const [newUser, created] = await db.user.findOrCreate({where:{email: req.body.email}})
+    if(!created){
+        console.log('user already exists')
+        res.render('users/login.ejs', {error: 'Looks like you already have an account! Try logging in :)'})
+    } else {
+        const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+        newUser.password = hashedPassword
+        await newUser.save()
+        const encryptedUserId = cryptojs.AES.encrypt(newUser.id.toString(), process.env.SECRET)
+        const encryptedUserIdString = encryptedUserId.toString()
+        res.cookie('userId', encryptedUserIdString)
+        res.redirect('/')
+    }
+})
+```
