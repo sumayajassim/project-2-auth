@@ -5,7 +5,29 @@ Authentication is determining if a user is who they say they are. A public field
 
 Authorization is a separate process, and it can only happen after authentication. Once we've determined that a user is who they claim to be, we may want to check if they have permission to take a specific action. For example, the customers of our site may not have the same permissions as an admin. We are checking if the (already-authenticated) user is _authorized_ to take an action, which is why this is called authorization.
 
-Today we will only be implementing authentication, but it's important to know that these are two separate processes.
+This app implements _AUTHENTICATION_. You will have to implement the _authorization_ piece on your own.
+
+---
+
+# Set Up
+
+1. Fork & clone this repository.
+
+2. Open the `config/config.json` file and configure based on your needs. (Change the database name, add username and Password if need be.) *Leave the production object alone; you may need it for deployment.*
+
+3. Currently the user model has *email* and *password* fields. If your project calls for any other columns in your user table, modify the `models/user.js` and `migrations/20220224182128-create-user.js` files accordingly.
+
+4. Create your database in PG Admin or the psql shell, then migrate the user model (`sequelize db:migrate` via the sequelize-cli).
+
+5. Create a `.env` file in the root folder. Add a `SECRET` environment varialbe (this can be anything you want it to be; it does not matter. eg `SECRET=somethingsupersecret`)
+
+6. Run `nodemon` and test for functionality.
+
+---
+
+# How to Build this App from Scratch
+
+The following instructions will help you recreate this repo from scratch, should you choose to do this.
 
 ## Part 0: Scaffolding the app
 Set up a new node/express app for your project 2
