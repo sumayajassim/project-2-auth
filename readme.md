@@ -1,4 +1,4 @@
-# PEN Auth Boilerplate
+# PEN Auth Boilerplate (Light)
 
 ## Overview: Authentication and Authorization
 Authentication is determining if a user is who they say they are. A public field like email is not enough to make this determination, and this is why we have passwords. Only the _authentic_ owner of that email will know the password. That's why the process of verifying user credentials is called authentication.
@@ -27,7 +27,7 @@ This app implements _AUTHENTICATION_. You will have to implement the _authorizat
 
 # How to Build this App from Scratch
 
-The following instructions will help you recreate this repo from scratch, should you choose to do this.
+This repo is a finished app. If you'd like to recreate this repo from scratch, the following instructions will help you.
 
 ## Part 0: Scaffolding the app
 Set up a new node/express app for your project 2
