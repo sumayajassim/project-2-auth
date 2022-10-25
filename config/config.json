@@ -1,16 +1,11 @@
 {
   "development": {
-    "database": "auth_boilerplate",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
-  },
-  "test": {
-    "database": "database_test",
+    "database": "project_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "database": "database_production",
+    "database": "project_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

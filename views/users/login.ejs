@@ -1,4 +1,4 @@
-<form action="/users/login" method="POST">
+<!-- <form action="/users/login" method="POST">
     <label for="email">Email:</label>
     <input type="email" name="email" id="email">
 
@@ -6,4 +6,27 @@
     <input type="password" name="password" id="password">
 
     <button type="submit">Login</button>
-</form>
+</form> -->
+<!-- <script src="../../public/script.js"></script> -->
+
+<div class="login-container">
+    <h3>Welcome back!</h3>
+    <form class="row g-3" method="POST" action="/users/login">
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="email">
+      </div>
+      <div class="mb-3">
+        <label for="inputPassword2" class="form-label">Password</label>
+        <div class="input-container">
+            <button type="button" onclick="togglePassword()" class="button-eye">
+                <i id="icon"class="fa-solid fa-eye-slash"></i>
+            </button>
+            <input type="password" class="form-control icon" id="inputPassword2" placeholder="Password" name="password">
+        </div>
+        <a href="/users/password" class="forgot-link">Forgot Password?</a>
+      </div>
+      <input type="submit" value="Login" class="btn btn-primary mb-3">
+      <a href="/users/new" class="forgot-link">Don't have an account? Sign up</a>
+    </form>
+</div>

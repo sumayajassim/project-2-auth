@@ -4,13 +4,14 @@ const ejsLayouts = require('express-ejs-layouts')
 const cookieParser = require('cookie-parser')
 const db = require('./models')
 const cryptoJS = require('crypto-js')
-require('dotenv').config()
+require('dotenv').config();
 
 // MIDDLEWARE
 app.set('view engine', 'ejs')
 app.use(ejsLayouts)
 app.use(cookieParser())
 app.use(express.urlencoded({extended: false}))
+app.use(express.static("public")); 
 
 // AUTHENTICATION MIDDLEWARE
 app.use(async (req, res, next)=>{
@@ -28,7 +29,11 @@ app.use('/users', require('./controllers/users'))
 
 // ROUTES
 app.get('/', (req, res)=>{
-    res.render('home')
+    if(res.locals.user){
+        res.render('home')
+    }else{
+        res.render("users/login")
+    }
 })
 
 app.listen(8000, ()=>{

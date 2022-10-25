@@ -3,10 +3,23 @@ const db = require('../models')
 const router = express.Router()
 const cryptojs = require('crypto-js')
 require('dotenv').config()
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 router.get('/new', (req, res)=>{
     res.render('users/new.ejs')
+})
+
+router.get('/', (req,res)=>{
+    db.user.findAll({
+        where: {
+            email: { [Op.like]: `%${req.query.search}%` },
+          },
+    }).then(response=>{
+        // res.send(response);
+        console.log(response)
+    })
 })
 
 router.post('/', async (req, res)=>{
