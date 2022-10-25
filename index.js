@@ -30,7 +30,7 @@ app.use('/users', require('./controllers/users'))
 // ROUTES
 app.get('/', (req, res)=>{
     if(res.locals.user){
-        res.render('home')
+        res.render('home', {searchResults: []})
     }else{
         res.render("users/login")
     }

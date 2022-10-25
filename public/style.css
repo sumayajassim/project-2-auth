@@ -91,6 +91,9 @@ nav{
 
 .input-with-left-icon:focus{
     background-color:#F5F5F5;
+    border-color: rgb(173, 171, 171);
+    outline: 0;
+    box-shadow:none;
 
 }
 
@@ -142,9 +145,22 @@ nav{
 
 .users-list{
     display: block;
-    border: 1px solid#eee;
+    border: 1px solid#ced4da;
+
 }
 
 .hidden{
     display: none;
+}
+
+.dropdown-opened{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.dropdown-item-a{
+    height: 50px;
+    margin: 0;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ced4da;
 }

@@ -5,7 +5,7 @@ let show = false;
 let timer;
 let searchResults = [];
 
-ejs.render('home.ejs', {searchResults: searchResults});
+// ejs.render('home.ejs', {searchResults: searchResults});
 
 
 function togglePassword(){
@@ -27,9 +27,10 @@ if(type=='password'){
 function fetchUsers(event){
     let search = event.target.value;
     let searchResultsDiv = document.getElementById('searchResults'); 
+    let searchInput = document.querySelector('.input-with-left-icon');
     clearTimeout(timer);
     // console.log(event.target.value)
-
+    if(search != ''){
     timer = setTimeout(() => {
         axios.get('users', {
             params: {
@@ -40,10 +41,21 @@ function fetchUsers(event){
             searchResults = response.data;
 
             console.log(searchResults);
+            let template =`
+                    <% searchResults.forEach(user => { %>
+                        <li class="dropdown-item-a"><a class="dropdown-item" href="#"><%= user.email%></a></li>
+                    <% }); %> 
+                `
+              let html = ejs.render(template, {searchResults: searchResults});
+              document.getElementById('searchResults').innerHTML = html;
             if(searchResults.length > 0){
                 searchResultsDiv.classList.remove('hidden');
+                searchInput.classList.add('dropdown-opened');
+
+            }else{
+                searchResultsDiv.classList.add('hidden');
+                searchInput.classList.remove('dropdown-opened');
             }
-            ejs.render('home', {searchResults: searchResults});
 
         })
         
@@ -54,6 +66,11 @@ function fetchUsers(event){
       
     //    console.log(event.target)
     }, 1000);
+}else{
+    searchResultsDiv.classList.add('hidden');
+    searchInput.classList.remove('dropdown-opened');
+
+}
 
 }
 

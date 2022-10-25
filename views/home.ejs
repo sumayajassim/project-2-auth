@@ -6,11 +6,7 @@
             <input type="text" class="form-control input-with-left-icon"  placeholder="Search by email address" name="searchText" onkeyup="fetchUsers(event)">
         </div>
         <ul class="hidden users-list" id="searchResults">
-            <% if(searchResults){ %> 
-                <% searchResults.forEach(user => { %>
-                    <li><a class="dropdown-item" href="#"><%= user.email%></a></li>
-                <% }); %> 
-            <% } %> 
+           
           </ul>
         <ul class="chats-container">
             <li>
