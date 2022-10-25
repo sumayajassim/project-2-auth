@@ -17,8 +17,8 @@ router.get('/', (req,res)=>{
             email: { [Op.like]: `%${req.query.search}%` },
           },
     }).then(response=>{
-        // res.send(response);
-        console.log(response)
+        // res.render('home', {searchResult: response.data});
+        res.send(response)
     })
 })
 

@@ -1,9 +1,13 @@
 // let passwordInput = document.getElementById('inputPassword2');
 // let showPassword = document.getElementById('showPassword')
-// const axios = require('axios').default;
+
 let show = false;
 let timer;
 let searchResults = [];
+
+ejs.render('home.ejs', {searchResults: searchResults});
+
+
 function togglePassword(){
     let i = document.getElementById('icon').classList[1].split('-');
     let classitem = document.getElementById('icon');
@@ -22,24 +26,27 @@ if(type=='password'){
 
 function fetchUsers(event){
     let search = event.target.value;
+    let searchResultsDiv = document.getElementById('searchResults'); 
     clearTimeout(timer);
     // console.log(event.target.value)
 
     timer = setTimeout(() => {
-        // searchResults = searchResults.filter(item => {
-        //     return item.email.toLowerCase().indexOf(search.toLowerCase()) !== -1;
-        // });
-        // axios({
-        //     method: 'get',
-        //     url: '/users',
-        //     data: {
-        //         search : search,
-        //     }
         axios.get('users', {
             params: {
                 search: search
             }
-        });
+        }).then(response =>{
+            console.log("response", response.data)
+            searchResults = response.data;
+
+            console.log(searchResults);
+            if(searchResults.length > 0){
+                searchResultsDiv.classList.remove('hidden');
+            }
+            ejs.render('home', {searchResults: searchResults});
+
+        })
+        
 
         // axios({
 

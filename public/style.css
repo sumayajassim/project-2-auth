@@ -138,3 +138,13 @@ nav{
 .margin-btm{
     margin-bottom: 30px ;
 }
+
+
+.users-list{
+    display: block;
+    border: 1px solid#eee;
+}
+
+.hidden{
+    display: none;
+}

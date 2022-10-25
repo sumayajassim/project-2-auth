@@ -1,10 +1,17 @@
 <div class="home-page">
     <div class="chats-list">
         <h1 class="margin-btm">Messages</h1>
-        <div class="input-container">
+        <div class="input-container data-mdb-toggle="dropdown"">
             <div class="left-input-icon"><i class="fa-solid fa-magnifying-glass input-icon-color"></i></div>
             <input type="text" class="form-control input-with-left-icon"  placeholder="Search by email address" name="searchText" onkeyup="fetchUsers(event)">
         </div>
+        <ul class="hidden users-list" id="searchResults">
+            <% if(searchResults){ %> 
+                <% searchResults.forEach(user => { %>
+                    <li><a class="dropdown-item" href="#"><%= user.email%></a></li>
+                <% }); %> 
+            <% } %> 
+          </ul>
         <ul class="chats-container">
             <li>
                 <div class="chat-item">
