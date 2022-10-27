@@ -9,17 +9,28 @@
            
           </ul>
         <ul class="chats-container">
-            <li>
-                <div class="chat-item">
-                </div>
-            </li>
-            <li>
-                <div class="chat-item">
-                </div>
-            </li>
+            <% chats.forEach(item => { %>
+                <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.reciever.firstName%>','<%=item.reciever.lastName%>')">
+                    <div class="chat-item">
+                      <%= item.reciever.firstName %> <%= item.reciever.lastName %>
+                    </div>
+                </li>
+           <% }) %>  
         </ul>
     </div>
     <div class="chat-content">
-        hi
+        <div class="chat-header">
+            <div id="chatHeaderContainer">
+                
+            </div>
+        </div>
+        <div class="chat-container">
+            <ul id="messages"></ul>
+            <form id="form" method="POST">
+              <input id="input" name="content" autocomplete="off"/>
+              <input type="submit" value="Send">
+            </form>
+        </div>
     </div>
 </div>
+

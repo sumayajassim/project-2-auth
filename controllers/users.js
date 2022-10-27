@@ -30,6 +30,8 @@ router.post('/', async (req, res)=>{
     } else {
         const hashedPassword = bcrypt.hashSync(req.body.password, 10)
         newUser.password = hashedPassword
+        newUser.firstName = req.body.firstName;
+        newUser.lastName = req.body.lastName;
         await newUser.save()
         const encryptedUserId = cryptojs.AES.encrypt(newUser.id.toString(), process.env.SECRET)
         const encryptedUserIdString = encryptedUserId.toString()
