@@ -7,9 +7,37 @@ const bcrypt = require('bcrypt');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
-router.get('/new', (req, res)=>{
-    res.render('users/new.ejs')
-})
+
+
+// router.get('/:senderId/:receiverId', (req, res)=>{
+//     let sender = req.params.senderId;
+//     let reciever = req.params.receiverId;
+//     db.chat.findOrCreate({
+//         where: {
+//           [Op.and]:[
+//             {
+//               toUser: {
+//                 [Op.or]: [sender, reciever]
+//               },
+//             },
+//             {
+//               fromUser:{
+//                 [Op.or]: [sender,reciever]
+//               }
+//             }
+//           ]
+//         }
+//       }).then(([chat, created]) => {
+//         if(!created){
+//             console.log('the chat is exist')
+//         }else{
+//             axios.get(`chat/${chat.id}`)
+//             .then(response =>{
+//                 console.log('hi')
+//             })
+//         }
+//     })
+// })
 
 router.get('/', (req,res)=>{
     db.user.findAll({
@@ -35,10 +63,13 @@ router.get('/:id', (req,res)=>{
 
 router.get('/:id/messages', (req,res)=>{
     db.message.findAll({
-        where: {chatId: req.params.id}
+        where: {chatId: req.params.id},
+        order: [
+            ['createdAt', 'ASC'],
+        ]
     })
     .then(messages =>{
-        res.send({messages: messages, chatId: req.params.id});
+        res.send({messages: messages, chatId: req.params.id, userId: res.locals.user.id});
     })
 })
 

@@ -1,18 +1,26 @@
 // let passwordInput = document.getElementById('inputPassword2');
 // let showPassword = document.getElementById('showPassword')
-
 let show = false;
 let timer;
 let searchResults = [];
 let chatLi = document.getElementById('list-item');  
 let chatId;
 let messagesArr;
-// chatLi.addEventListener('click', (item)={
+let socket = io();
+let messages = document.getElementById('messages');
+let form = document.getElementById('form');
+let input = document.getElementById('input');
+let userId ;
+let senderClass = 'sender';
+let receiverClass= 'reciever';
 
-// });
 
-// ejs.render('home.ejs', {searchResults: searchResults});
+const cookieValue = document.cookie
+  .split('; ')
+  .find((row) => row.startsWith('userId='))
+  ?.split('=')[1];
 
+console.log(cookieValue);
 
 function togglePassword(){
     let i = document.getElementById('icon').classList[1].split('-');
@@ -43,15 +51,17 @@ function fetchUsers(event){
                 search: search
             }
         }).then(response =>{
-            console.log("response", response.data)
             searchResults = response.data;
-
-            console.log(searchResults);
             let template =`
                     <% searchResults.forEach(user => { %>
-                        <li class="dropdown-item-a"><a class="dropdown-item" href="/chat/<%= user.id%>"><%= user.firstName%> <%= user.lastName%></a></li>
+                        <li class="dropdown-item">
+                            <button class="dropdown-item">
+                            <%= user.firstName%> <%=user.lastName%>
+                            </button>
+                        </li>
                     <% }); %> 
                 `
+                //onclick="SearchChatClicked(<%=userId%>, <%=user.id%>)"
               let html = ejs.render(template, {searchResults: searchResults});
               document.getElementById('searchResults').innerHTML = html;
             if(searchResults.length > 0){
@@ -64,13 +74,6 @@ function fetchUsers(event){
             }
 
         })
-        
-
-        // axios({
-
-        // })
-      
-    //    console.log(event.target)
     }, 1000);
 }else{
     searchResultsDiv.classList.add('hidden');
@@ -79,11 +82,16 @@ function fetchUsers(event){
 
 }
 
-
+// function SearchChatClicked(sender, receiver ){
+//     console.log('sender', sender);
+//     console.log('receiver', receiver);
+    
+// }
 function chatClicked(item, firstName, lastName){
     console.log('item', item)
     console.log('firstName', firstName)
     console.log('lastName', lastName)
+    console.log('chatId', chatId)
     document.getElementById('chatHeaderContainer').innerText = `${firstName} ${lastName}`;
 
     // chatName.innerText = ;
@@ -91,50 +99,58 @@ function chatClicked(item, firstName, lastName){
     .then(response =>{
         form.action = `/chats/${chatId}/messages`
         chatId = response.data.chatId;
+        userId = response.data.userId;
         messagesArr= response.data.messages;
-        console.log('messages', messagesArr);
+        // console.log('messages', messagesArr);
+        let template =`
+            <% messagesArr.forEach(message => { %>
+                    <% if(message.senderId === userId) {%>
+                <div class="sender"><%= message.content%></div>
+                <%}else{%>
+                    <div class="reciever"><%= message.content%></div>
+                <%}%>
+            <% }); %> `
+                    
+        let html = ejs.render(template, {messages: messagesArr});
+        messages.innerHTML = html;
+        messages.scrollTop = messages.scrollHeight;
+
     })
 }
 
 
-let socket = io();
-let messages = document.getElementById('messages');
-let form = document.getElementById('form');
-let input = document.getElementById('input');
+
 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
-  console.log(e.target.input.value);
-//   axios({
-//     method: 'post',
-//     url: '/chats/'+chatId+'/messages',
-//     headers: {'Content-Type' : 'application/json'},
-//     body: {content: e.target.input.value}
-//   })
-
-let requestData = {
-    "message":  e.target.input.value
-}
-
-  axios.post('/chats/'+chatId+'/messages',requestData )
+  axios.post('/chats/'+chatId+'/messages', {message: e.target.input.value})
   .then(function (response) {
-    console.log('response', response);
-  })
-    // console.log('req',req.body.content);
-    
-  if (input.value) {
-    socket.emit('chat message', {msg: input.value, chatId: chatId});
-    input.value = '';
-  }
+    console.log('responseSubmit', response.data)
+    //     messages = response;
+
+    //      
+    if (input.value) {
+        socket.emit('chat message', {msg: input.value, chatId: chatId, senderId: response.data.senderId});
+        input.value = '';
+      }  
+  })    
+ 
 });
 
-socket.on('chat message', function(msg) {
-  var item = document.createElement('li');
-  item.textContent = msg;
+socket.on('chat message', function(data) {
+    console.log('msg',data.msg );
+    console.log('senderId',data.senderId );
+  let item = document.createElement('div');
+    // console.log('try to access user id ' , res.locals.user.id)
+    if(userId === data.senderId){
+        item.classList.add('sender');
+    }else{
+        item.classList.add('reciever');
+    }
+
+  item.textContent = data.msg;
   messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
+  messages.scrollTop = messages.scrollHeight;
+//   window.scrollTo(0, document.body.scrollHeight);
 });
 
-
-
-// showPassword.addEventListener('click', togglePassword(show))

@@ -21,7 +21,7 @@ header{
 
 
 
-ul{
+.header-ul{
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -123,10 +123,12 @@ nav{
     background-color: white;
     border: 3px solid gray ;
     padding: 20px;
+    
 }
 
 .chat-item{
     border-bottom: 2px solid #eee ;
+    
 
 }
 .chat-content{
@@ -138,6 +140,9 @@ nav{
 .chats-container{
     display: flex;
     flex-direction: column;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 .margin-btm{
@@ -193,6 +198,32 @@ nav{
 #input:focus { outline: none; }
 #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
 
-#messages { list-style-type: none; margin: 0; padding: 0; }
-#messages > li { padding: 0.5rem 1rem; }
-#messages > li:nth-child(odd) { background: #efefef; }
+#messages {
+    list-style-type: none;
+    height: 90%;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+#messages > div { padding: 0.5rem 1rem; }
+/* #messages > div:nth-child(odd) { background: #efefef; } */
+
+.sender{
+    background-color: blue;
+    margin: 10px;
+    border-radius: 20px;
+    align-self: end;
+    border-bottom-right-radius: 0;
+
+}
+
+.reciever{
+    background-color: pink;
+    margin: 10px;
+    border-radius: 20px;
+    align-self: start;
+    border-bottom-left-radius: 0;
+
+}

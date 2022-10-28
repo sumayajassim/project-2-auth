@@ -10,11 +10,20 @@
           </ul>
         <ul class="chats-container">
             <% chats.forEach(item => { %>
-                <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.reciever.firstName%>','<%=item.reciever.lastName%>')">
-                    <div class="chat-item">
-                      <%= item.reciever.firstName %> <%= item.reciever.lastName %>
-                    </div>
-                </li>
+                <%if(item.reciever){ %>
+                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.reciever.firstName%>','<%=item.reciever.lastName%>',)">
+                        <div class="chat-item">
+                          <%= item.reciever.firstName %> <%= item.reciever.lastName %>
+                        </div>
+                    </li>
+                <% } else{ %>
+                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.sender.firstName%>','<%=item.sender.lastName%>',)">
+                            <div class="chat-item">
+                            <%= item.sender.firstName %> <%= item.sender.lastName %>
+                            </div>
+                        </li>
+                    <%}%>
+
            <% }) %>  
         </ul>
     </div>
@@ -25,7 +34,7 @@
             </div>
         </div>
         <div class="chat-container">
-            <ul id="messages"></ul>
+            <div id="messages"></div>
             <form id="form" method="POST">
               <input id="input" name="content" autocomplete="off"/>
               <input type="submit" value="Send">
