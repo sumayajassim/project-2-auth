@@ -91,9 +91,6 @@ router.post('/:senderId/:receiverId', (req, res)=>{
         },
         defaults: { toUser: reciever, fromUser:sender },
       }).then(([chat, created]) => {
-        if(!created){
-            console.log('the chat is exist')
-        }else{
             try{
                 db.chat.findOne({
                     include : [{
@@ -105,7 +102,7 @@ router.post('/:senderId/:receiverId', (req, res)=>{
                         id: chat.dataValues.id
                     }
                 }).then(chat=> {
-                    res.send(chat)
+                    res.send({chat: chat, created: created})
                 })
             } catch(err){
                 console.log(err)
@@ -117,7 +114,6 @@ router.post('/:senderId/:receiverId', (req, res)=>{
             // .then(response =>{
             //     console.log('hi')
             // })
-        }
     })
 })
 

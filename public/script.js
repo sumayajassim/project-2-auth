@@ -100,30 +100,33 @@ function SearchChatClicked(sender, receiver ){
     console.log('receiver', receiver);
     axios.post(`chats/${sender}/${receiver}`)
     .then(response =>{
-        let newChat = response.data;
+        let chat = response.data.chat;
+        let created = response.data.created;
         console.log(newChat);
-        let newChatli = document.createElement('li');
-        let newDiv = document.createElement('div');
-        // newChatli.addEventListener('click',chatClicked(newChat.id, newChat.reciever.firstName, newChat.reciever.lastName) );
-        newChatli.setAttribute("onclick",`chatClicked(${newChat.id}, '${newChat.reciever.firstName}', '${newChat.reciever.lastName}')`)
-        // newChatli.onclick = 
-        newDiv.classList.add('chat-item');
-        newDiv.innerText = `${newChat.reciever.firstName} ${newChat.reciever.lastName}`;
-        newChatli.appendChild(newDiv);
-        chatul.appendChild(newChatli);
+        if(created){
+            addToChatsList(chat.id , chat.reciever.firstName, chat.reciever.lastName);
+        }
+        chatClicked(chat.id, chat.reciever.firstName, chat.reciever.lastName);
         searchInput.value = '';
         searchResultsDiv.classList.add('hidden');
         searchInput.classList.remove('dropdown-opened');
-        // input.value= '';
-        // document.getElementById('chatHeaderContainer').innerText = `${firstName} ${lastName}`;
-        chatClicked(newChat.id, newChat.reciever.firstName, newChat.reciever.lastName);
-        
-        // chats_.push(newChat); // not working because chats_ type is string 
         console.log('updated chats',chats_);
         console.log('created chat res',response)
     })
     
 }
+
+function addToChatsList(id, firstName, lastName){
+    let newChatli = document.createElement('li');
+    let newDiv = document.createElement('div');
+    newChatli.setAttribute("onclick",`chatClicked(${id},'${firstName}', '${lastName}')`)
+    newDiv.classList.add('chat-item');
+    newDiv.innerText = `${firstName} ${lastName}`;
+    newChatli.appendChild(newDiv);
+    chatul.appendChild(newChatli);
+   
+}
+
 function chatClicked(item, firstName, lastName){
     console.log('item', item)
     console.log('firstName', firstName)

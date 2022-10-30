@@ -154,6 +154,7 @@ nav{
     display: block;
     border: 1px solid#ced4da;
     padding: 0;
+    height: 40px;
 }
 
 .hidden{
