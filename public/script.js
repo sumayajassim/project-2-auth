@@ -1,26 +1,41 @@
 // let passwordInput = document.getElementById('inputPassword2');
+
+// const { response } = require("express");
+
+// const { default: axios } = require("axios");
+
 // let showPassword = document.getElementById('showPassword')
 let show = false;
 let timer;
 let searchResults = [];
-let chatLi = document.getElementById('list-item');  
+let chatLi = document.getElementById('list-item'); 
+// let searchText = document.getElementById('searchText');
+let chatul = document.querySelector('.chats-container');  
 let chatId;
 let messagesArr;
 let socket = io();
 let messages = document.getElementById('messages');
 let form = document.getElementById('form');
 let input = document.getElementById('input');
-let userId ;
-let senderClass = 'sender';
-let receiverClass= 'reciever';
+let newChat;
+let searchResultsDiv = document.getElementById('searchResults'); 
+let searchInput = document.querySelector('.input-with-left-icon');
 
+// let chatsContainer = document.querySelector('.')
+// let chats_ = document.cookie
+// .split('; ')
+// .find((row) => row.startsWith('chats='))
+// ?.split('=')[1];;
 
-const cookieValue = document.cookie
+// let chats_ = '<%- chats %>'
+
+const userId = document.cookie
   .split('; ')
-  .find((row) => row.startsWith('userId='))
+  .find((row) => row.startsWith('userID='))
   ?.split('=')[1];
 
-console.log(cookieValue);
+console.log('userID',userId);
+console.log('chats', Object.freeze(chats_));
 
 function togglePassword(){
     let i = document.getElementById('icon').classList[1].split('-');
@@ -40,8 +55,6 @@ if(type=='password'){
 
 function fetchUsers(event){
     let search = event.target.value;
-    let searchResultsDiv = document.getElementById('searchResults'); 
-    let searchInput = document.querySelector('.input-with-left-icon');
     clearTimeout(timer);
     // console.log(event.target.value)
     if(search != ''){
@@ -54,14 +67,14 @@ function fetchUsers(event){
             searchResults = response.data;
             let template =`
                     <% searchResults.forEach(user => { %>
-                        <li class="dropdown-item">
+                        <li class="dropdown-item" onclick="SearchChatClicked(<%=userId%>, <%=user.id%>)">
                             <button class="dropdown-item">
                             <%= user.firstName%> <%=user.lastName%>
                             </button>
                         </li>
                     <% }); %> 
                 `
-                //onclick="SearchChatClicked(<%=userId%>, <%=user.id%>)"
+                
               let html = ejs.render(template, {searchResults: searchResults});
               document.getElementById('searchResults').innerHTML = html;
             if(searchResults.length > 0){
@@ -82,16 +95,40 @@ function fetchUsers(event){
 
 }
 
-// function SearchChatClicked(sender, receiver ){
-//     console.log('sender', sender);
-//     console.log('receiver', receiver);
+function SearchChatClicked(sender, receiver ){
+    console.log('sender', sender);
+    console.log('receiver', receiver);
+    axios.post(`chats/${sender}/${receiver}`)
+    .then(response =>{
+        let newChat = response.data;
+        console.log(newChat);
+        let newChatli = document.createElement('li');
+        let newDiv = document.createElement('div');
+        // newChatli.addEventListener('click',chatClicked(newChat.id, newChat.reciever.firstName, newChat.reciever.lastName) );
+        newChatli.setAttribute("onclick",`chatClicked(${newChat.id}, '${newChat.reciever.firstName}', '${newChat.reciever.lastName}')`)
+        // newChatli.onclick = 
+        newDiv.classList.add('chat-item');
+        newDiv.innerText = `${newChat.reciever.firstName} ${newChat.reciever.lastName}`;
+        newChatli.appendChild(newDiv);
+        chatul.appendChild(newChatli);
+        searchInput.value = '';
+        searchResultsDiv.classList.add('hidden');
+        searchInput.classList.remove('dropdown-opened');
+        // input.value= '';
+        // document.getElementById('chatHeaderContainer').innerText = `${firstName} ${lastName}`;
+        chatClicked(newChat.id, newChat.reciever.firstName, newChat.reciever.lastName);
+        
+        // chats_.push(newChat); // not working because chats_ type is string 
+        console.log('updated chats',chats_);
+        console.log('created chat res',response)
+    })
     
-// }
+}
 function chatClicked(item, firstName, lastName){
     console.log('item', item)
     console.log('firstName', firstName)
     console.log('lastName', lastName)
-    console.log('chatId', chatId)
+    // console.log('chatId', chatId)
     document.getElementById('chatHeaderContainer').innerText = `${firstName} ${lastName}`;
 
     // chatName.innerText = ;
@@ -99,12 +136,12 @@ function chatClicked(item, firstName, lastName){
     .then(response =>{
         form.action = `/chats/${chatId}/messages`
         chatId = response.data.chatId;
-        userId = response.data.userId;
+        // userId = response.data.userId;
         messagesArr= response.data.messages;
-        // console.log('messages', messagesArr);
+        console.log('messages', messagesArr);
         let template =`
             <% messagesArr.forEach(message => { %>
-                    <% if(message.senderId === userId) {%>
+                    <% if(message.senderId == userId) {%>
                 <div class="sender"><%= message.content%></div>
                 <%}else{%>
                     <div class="reciever"><%= message.content%></div>
@@ -123,34 +160,39 @@ function chatClicked(item, firstName, lastName){
 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
-  axios.post('/chats/'+chatId+'/messages', {message: e.target.input.value})
-  .then(function (response) {
-    console.log('responseSubmit', response.data)
-    //     messages = response;
-
-    //      
-    if (input.value) {
-        socket.emit('chat message', {msg: input.value, chatId: chatId, senderId: response.data.senderId});
-        input.value = '';
-      }  
-  })    
+  if (input.value) {
+    console.log('111');
+    try{
+        axios.post(`chats/${chatId}/messages`, {message: e.target.input.value})
+        .then(response =>{
+          // response.json(response)
+          console.log('response',response);
+          // console.log('responseSubmit', response.data)  
+          socket.emit('chat message', {msg: input.value, chatId: chatId, senderId: response.data.senderId});
+          input.value = '';
+          
+        })  
+    }catch(err){
+        console.log('errrrr',err)
+    }
+} 
  
 });
 
 socket.on('chat message', function(data) {
     console.log('msg',data.msg );
     console.log('senderId',data.senderId );
-  let item = document.createElement('div');
+    let item = document.createElement('div');
     // console.log('try to access user id ' , res.locals.user.id)
-    if(userId === data.senderId){
+    if(userId == data.senderId){
         item.classList.add('sender');
     }else{
         item.classList.add('reciever');
     }
 
-  item.textContent = data.msg;
-  messages.appendChild(item);
-  messages.scrollTop = messages.scrollHeight;
+    item.textContent = data.msg;
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
 //   window.scrollTo(0, document.body.scrollHeight);
 });
 

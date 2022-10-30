@@ -3,7 +3,7 @@
         <h1 class="margin-btm">Messages</h1>
         <div class="input-container data-mdb-toggle="dropdown"">
             <div class="left-input-icon"><i class="fa-solid fa-magnifying-glass input-icon-color"></i></div>
-            <input type="text" class="form-control input-with-left-icon"  placeholder="Search by email address" name="searchText" onkeyup="fetchUsers(event)">
+            <input type="text" class="form-control input-with-left-icon"  placeholder="Search by email address" name="searchText" id="searchText" onkeyup="fetchUsers(event)">
         </div>
         <ul class="hidden users-list" id="searchResults">
            
@@ -11,20 +11,19 @@
         <ul class="chats-container">
             <% chats.forEach(item => { %>
                 <%if(item.reciever){ %>
-                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.reciever.firstName%>','<%=item.reciever.lastName%>',)">
+                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.reciever.firstName%>','<%=item.reciever.lastName%>')">
                         <div class="chat-item">
                           <%= item.reciever.firstName %> <%= item.reciever.lastName %>
                         </div>
                     </li>
                 <% } else{ %>
-                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.sender.firstName%>','<%=item.sender.lastName%>',)">
+                    <li id="list-item" onclick="chatClicked(<%=item.id%>,'<%=item.sender.firstName%>','<%=item.sender.lastName%>')">
                             <div class="chat-item">
-                            <%= item.sender.firstName %> <%= item.sender.lastName %>
+                                <%= item.sender.firstName %> <%= item.sender.lastName %>
                             </div>
                         </li>
                     <%}%>
-
-           <% }) %>  
+            <% }) %>  
         </ul>
     </div>
     <div class="chat-content">
@@ -43,3 +42,10 @@
     </div>
 </div>
 
+<script>
+    
+    let chats_ = <%chats%>
+    // chats_.split(',')
+   
+    console.log('chats.ejs ' , typeof' <%chats_%>')
+</script>

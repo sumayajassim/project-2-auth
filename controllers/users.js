@@ -14,7 +14,14 @@ router.get('/new', (req, res)=>{
 router.get('/', (req,res)=>{
     db.user.findAll({
         where: {
-            email: { [Op.like]: `%${req.query.search}%` },
+            [Op.and] : [
+                {
+                    email: { [Op.like]: `%${req.query.search}%` }
+                },
+                {
+                    id: {[Op.ne]: res.locals.user.id}
+                }
+            ]  
           },
     }).then(response=>{
         // res.render('home', {searchResult: response.data});
@@ -57,6 +64,7 @@ router.post('/login', async (req, res)=>{
         const encryptedUserId = cryptojs.AES.encrypt(user.id.toString(), process.env.SECRET)
         const encryptedUserIdString = encryptedUserId.toString()
         res.cookie('userId', encryptedUserIdString)
+        res.cookie('userID', user.id)
         res.redirect('/')
     }
 })

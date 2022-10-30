@@ -35,9 +35,6 @@ app.use(async (req, res, next)=>{
 })
 
 // CONTROLLERS
-app.use('/users', require('./controllers/users'))
-app.use('/chats', require('./controllers/chats'))
-
 
 // ROUTES
 app.get('/', (req, res)=>{
@@ -74,55 +71,6 @@ app.get('/', (req, res)=>{
                   }  
               })
             .then(chats =>{
-                let chats1 = chats
-
-            //    chats1 =chats1.forEach(chat=>{
-            //         if(typeof chat.sender != undefined){
-            //             // chat = chat.map((t)=>{
-            //             //     return
-            //             // })
-            //             chat.receiver = {};
-            //             chat.receiver = chat.sender;
-            //         }
-            //         delete chat['sender'];
-            //     })
-
-                // chats1.map((i)=>{
-                //     i.receiver = 1;
-                // })
-                // chats_ = obj.transaction.map((t) => {
-                //     return Object.assign({
-                //       "PAPPS286": t.PAPPS286,
-                //       "Nachname": t.Nachname,
-                //       "PADPS60": t.PADPS60,
-                //       "MH": {
-                //         "name": t.SurveyResults[0].result.name,
-                //         "email": t.SurveyResults[0].result.email,
-                //         "birthdate": t.SurveyResults[0].result.birthdate
-                //       }
-                //     })
-                //   })
-                  
-                // // res.send(chats);
-                // console.log('typof',chats_.sender );
-                // if(typeof chats_.sender != undefined ){
-                //     // chats[0].user = chats[0].sender;
-                //     // Object.assign(chats[0]['reciever'], chats[0]['sender']);
-                //    delete chats_.sender;
-                //     console.log('heeeeeelllo', chats_);
-                // chats_.test = " Sumaya"
-
-                // }else{
-                    // chats_.test = "hello Sumaya"
-                //     delete chats_.sender;
-                //     chats_.user = {name: "Sumaya"}
-
-                // // res.send(chats);
-
-                // }// Returns true
-
-                // res.send(chats1);
-
                 res.render('home', {searchResults: [], chats: chats})
             })
         }catch(err){
@@ -133,6 +81,11 @@ app.get('/', (req, res)=>{
         res.render("users/login")
     }
 })
+
+app.use('/users', require('./controllers/users'))
+app.use('/chats', require('./controllers/chats'))
+
+
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -147,7 +100,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, ()=>{
+server.listen(5000, ()=>{
     console.log('Project 2 Express Authentication')
 })
 

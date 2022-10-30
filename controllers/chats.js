@@ -5,39 +5,12 @@ const cryptojs = require('crypto-js')
 require('dotenv').config()
 const bcrypt = require('bcrypt');
 const Sequelize = require("sequelize");
+const { default: axios } = require('axios')
 const Op = Sequelize.Op;
 
 
 
-// router.get('/:senderId/:receiverId', (req, res)=>{
-//     let sender = req.params.senderId;
-//     let reciever = req.params.receiverId;
-//     db.chat.findOrCreate({
-//         where: {
-//           [Op.and]:[
-//             {
-//               toUser: {
-//                 [Op.or]: [sender, reciever]
-//               },
-//             },
-//             {
-//               fromUser:{
-//                 [Op.or]: [sender,reciever]
-//               }
-//             }
-//           ]
-//         }
-//       }).then(([chat, created]) => {
-//         if(!created){
-//             console.log('the chat is exist')
-//         }else{
-//             axios.get(`chat/${chat.id}`)
-//             .then(response =>{
-//                 console.log('hi')
-//             })
-//         }
-//     })
-// })
+
 
 router.get('/', (req,res)=>{
     db.user.findAll({
@@ -62,27 +35,89 @@ router.get('/:id', (req,res)=>{
 })
 
 router.get('/:id/messages', (req,res)=>{
-    db.message.findAll({
-        where: {chatId: req.params.id},
-        order: [
-            ['createdAt', 'ASC'],
-        ]
-    })
-    .then(messages =>{
-        res.send({messages: messages, chatId: req.params.id, userId: res.locals.user.id});
-    })
+    try{
+        db.message.findAll({
+            where: {chatId: req.params.id},
+            order: [
+                ['createdAt', 'ASC'],
+            ]
+        })
+        .then(messages =>{
+            res.send({messages: messages, chatId: req.params.id, userId: res.locals.user.id});
+        })
+    }catch(err){
+        // console.log('err1',err)
+    }
+    
 })
 
 router.post('/:id/messages', (req,res)=>{
     console.log("hi from post", req);
-    db.message.create({
-        chatId: req.params.id,
-        senderId: res.locals.user.id,
-        content: req.body.message,
-    })
-    .then(response =>{
-        res.send(response)
-        // console.log('response', response);
+    try{
+        db.message.create({
+            chatId: req.params.id,
+            senderId: res.locals.user.id,
+            content: req.body.message,
+        })
+        .then(response =>{
+            res.send(response)
+            // console.log('response', response);
+        })
+    }catch(err){
+        console.log('err1',err)
+
+    }
+   
+})
+
+
+router.post('/:senderId/:receiverId', (req, res)=>{
+    let sender = req.params.senderId;
+    let reciever = req.params.receiverId;
+    db.chat.findOrCreate({
+        where: {
+          [Op.and]:[
+            {
+              toUser: {
+                [Op.or]: [sender, reciever]
+              },
+            },
+            {
+              fromUser:{
+                [Op.or]: [sender,reciever]
+              }
+            }
+          ]
+        },
+        defaults: { toUser: reciever, fromUser:sender },
+      }).then(([chat, created]) => {
+        if(!created){
+            console.log('the chat is exist')
+        }else{
+            try{
+                db.chat.findOne({
+                    include : [{
+                        model: db.user,
+                        as: 'reciever',
+                        where: {id: chat.dataValues.toUser}
+                    }],
+                    where:{
+                        id: chat.dataValues.id
+                    }
+                }).then(chat=> {
+                    res.send(chat)
+                })
+            } catch(err){
+                console.log(err)
+            }         
+            // console.log('chatContent', chat)
+            // res.redirect(`chats/${chat.dataValues.id}`);
+            // res.json(chat)
+            // axios.get(`chat/${chat.id}`)
+            // .then(response =>{
+            //     console.log('hi')
+            // })
+        }
     })
 })
 
