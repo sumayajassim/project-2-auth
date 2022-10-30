@@ -5,11 +5,7 @@ const cryptojs = require('crypto-js')
 require('dotenv').config()
 const bcrypt = require('bcrypt');
 const Sequelize = require("sequelize");
-const { default: axios } = require('axios')
 const Op = Sequelize.Op;
-
-
-
 
 
 router.get('/', (req,res)=>{

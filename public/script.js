@@ -1,15 +1,7 @@
-// let passwordInput = document.getElementById('inputPassword2');
-
-// const { response } = require("express");
-
-// const { default: axios } = require("axios");
-
-// let showPassword = document.getElementById('showPassword')
 let show = false;
 let timer;
 let searchResults = [];
 let chatLi = document.getElementById('list-item'); 
-// let searchText = document.getElementById('searchText');
 let chatul = document.querySelector('.chats-container');  
 let chatId;
 let messagesArr;
@@ -20,14 +12,10 @@ let input = document.getElementById('input');
 let newChat;
 let searchResultsDiv = document.getElementById('searchResults'); 
 let searchInput = document.querySelector('.input-with-left-icon');
+let messageChat;
 
-// let chatsContainer = document.querySelector('.')
-// let chats_ = document.cookie
-// .split('; ')
-// .find((row) => row.startsWith('chats='))
-// ?.split('=')[1];;
+console.log(chatId)
 
-// let chats_ = '<%- chats %>'
 
 const userId = document.cookie
   .split('; ')
@@ -35,7 +23,6 @@ const userId = document.cookie
   ?.split('=')[1];
 
 console.log('userID',userId);
-console.log('chats', Object.freeze(chats_));
 
 function togglePassword(){
     let i = document.getElementById('icon').classList[1].split('-');
@@ -107,10 +94,10 @@ function SearchChatClicked(sender, receiver ){
             addToChatsList(chat.id , chat.reciever.firstName, chat.reciever.lastName);
         }
         chatClicked(chat.id, chat.reciever.firstName, chat.reciever.lastName);
+        toggleContainer();
         searchInput.value = '';
         searchResultsDiv.classList.add('hidden');
         searchInput.classList.remove('dropdown-opened');
-        console.log('updated chats',chats_);
         console.log('created chat res',response)
     })
     
@@ -124,7 +111,6 @@ function addToChatsList(id, firstName, lastName){
     newDiv.innerText = `${firstName} ${lastName}`;
     newChatli.appendChild(newDiv);
     chatul.appendChild(newChatli);
-   
 }
 
 function chatClicked(item, firstName, lastName){
@@ -139,6 +125,7 @@ function chatClicked(item, firstName, lastName){
     .then(response =>{
         form.action = `/chats/${chatId}/messages`
         chatId = response.data.chatId;
+        console.log('chatId', chatId);
         // userId = response.data.userId;
         messagesArr= response.data.messages;
         console.log('messages', messagesArr);
@@ -153,6 +140,7 @@ function chatClicked(item, firstName, lastName){
                     
         let html = ejs.render(template, {messages: messagesArr});
         messages.innerHTML = html;
+        toggleContainer();
         messages.scrollTop = messages.scrollHeight;
 
     })
@@ -171,7 +159,8 @@ form.addEventListener('submit', function(e) {
           // response.json(response)
           console.log('response',response);
           // console.log('responseSubmit', response.data)  
-          socket.emit('chat message', {msg: input.value, chatId: chatId, senderId: response.data.senderId});
+          messageChat = response.data.chatId
+          socket.emit('chat message', {msg: input.value, chatId: response.data.chatId, senderId: response.data.senderId});
           input.value = '';
           
         })  
@@ -184,18 +173,37 @@ form.addEventListener('submit', function(e) {
 
 socket.on('chat message', function(data) {
     console.log('msg',data.msg );
-    console.log('senderId',data.senderId );
+    console.log('data.senderId',data.senderId );
+    console.log('userId',userId );
+    messageChat = data.chatId
+    console.log('messageChat', messageChat);
+    console.log('chatID', parseInt(chatId));
+    console.log('messageChat === chatId',messageChat === chatId );
     let item = document.createElement('div');
-    // console.log('try to access user id ' , res.locals.user.id)
-    if(userId == data.senderId){
-        item.classList.add('sender');
-    }else{
-        item.classList.add('reciever');
-    }
 
-    item.textContent = data.msg;
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight;
+    if(parseInt(chatId) === messageChat ){
+        // console.log('try to access user id ' , res.locals.user.id)
+        if(parseInt(userId) == data.senderId){
+            item.classList.add('sender');
+            console.log('hellp from sender')
+        }else{
+            item.classList.add('reciever');
+        }
+        item.textContent = data.msg;
+        messages.appendChild(item);
+        messages.scrollTop = messages.scrollHeight;
+    }
 //   window.scrollTo(0, document.body.scrollHeight);
 });
 
+
+function toggleContainer(){
+    if(chatId){
+        document.querySelector('#filled').classList.remove('hidden');
+        document.querySelector('#plain').classList.add('hidden');
+
+    }else{
+        document.querySelector('#filled').classList.add('hidden');
+        document.querySelector('#plain').classList.remove('hidden');
+    }
+}

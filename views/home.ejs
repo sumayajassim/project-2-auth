@@ -26,26 +26,20 @@
             <% }) %>  
         </ul>
     </div>
-    <div class="chat-content">
-        <div class="chat-header">
-            <div id="chatHeaderContainer">
-                
+    <div id="plain" class="chat-content welocome-div">
+      
+    </div>
+        <div id="filled" class="chat-content hidden">
+            <div class="chat-header">
+                <div id="chatHeaderContainer"> 
+                </div>
+            </div>
+            <div class="chat-container">
+                <div id="messages"></div>
+                <form id="form" method="POST">
+                <input id="input" name="content" autocomplete="off"/>
+                <input class="submitBtn" type="submit" value="Send">
+                </form>
             </div>
         </div>
-        <div class="chat-container">
-            <div id="messages"></div>
-            <form id="form" method="POST">
-              <input id="input" name="content" autocomplete="off"/>
-              <input type="submit" value="Send">
-            </form>
-        </div>
-    </div>
 </div>
-
-<script>
-    
-    let chats_ = <%chats%>
-    // chats_.split(',')
-   
-    console.log('chats.ejs ' , typeof' <%chats_%>')
-</script>
